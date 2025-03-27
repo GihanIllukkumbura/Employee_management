@@ -1,11 +1,11 @@
 import 'package:employee_management_app/models/employee.dart';
+import 'package:employee_management_app/screens/employeeDetailsPage.dart';
+import 'package:employee_management_app/screens/employeeForm.dart';
 import 'package:flutter/material.dart';
 
 class EmployeeListPage extends StatefulWidget {
-  const EmployeeListPage({super.key});
-
   @override
-  State<EmployeeListPage> createState() => _EmployeeListPageState();
+  _EmployeeListPageState createState() => _EmployeeListPageState();
 }
 
 class _EmployeeListPageState extends State<EmployeeListPage> {
@@ -30,12 +30,47 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     ),
   ];
 
+  void _addEmployee(Employee employee) {
+    setState(() {
+      employees.add(employee);
+    });
+  }
+
+  void _deleteEmployee(int index) {
+    setState(() {
+      employees.removeAt(index);
+    });
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Employee deleted')));
+  }
+
+  void _updateEmployee(int index, Employee updatedEmployee) {
+    setState(() {
+      employees[index] = updatedEmployee;
+    });
+  }
+
+  void _showAddEmployeeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EmployeeForm(onSubmit: _addEmployee);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Employee List'),
-        actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.add))],
+        title: Text('Employee '),
+        actions: [
+          IconButton(
+            onPressed: _showAddEmployeeDialog,
+            icon: const Icon(Icons.add),
+          ),
+        ],
       ),
       body:
           employees.isEmpty
@@ -53,9 +88,22 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       subtitle: Text(employee.contactNumber),
                       trailing: IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => {},
+                        onPressed: () => _deleteEmployee(index),
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EmployeeDetailsPage(
+                                  employee: employee,
+                                  onUpdate: (updatedEmployee) {
+                                    _updateEmployee(index, updatedEmployee);
+                                  },
+                                ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },

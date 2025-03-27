@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Employee Management',
       theme: ThemeData(primarySwatch: Colors.blue),
 
-      home: const EmployeeListPage(),
+      home: EmployeeListPage(),
       debugShowCheckedModeBanner: false,
     );
   }
